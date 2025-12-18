@@ -17,31 +17,33 @@ if choice == "Key Generation":
     if st.button("Generate Keys"):
         try:
             private_pem, public_pem = crypto_utils.generate_key_pair(curve_name)
-            
+            st.session_state['private_pem'] = private_pem
+            st.session_state['public_pem'] = public_pem
             st.success("Keys Generated Successfully!")
-            
-            c1, c2 = st.columns(2)
-            with c1:
-                st.subheader("Private Key")
-                st.code(private_pem.decode(), language='text')
-                st.download_button(
-                    label="Download Private Key",
-                    data=private_pem,
-                    file_name="private_key.pem",
-                    mime="application/x-pem-file"
-                )
-            
-            with c2:
-                st.subheader("Public Key")
-                st.code(public_pem.decode(), language='text')
-                st.download_button(
-                    label="Download Public Key",
-                    data=public_pem,
-                    file_name="public_key.pem",
-                    mime="application/x-pem-file"
-                )
         except Exception as e:
             st.error(f"Error generating keys: {e}")
+
+    if 'private_pem' in st.session_state and 'public_pem' in st.session_state:
+        c1, c2 = st.columns(2)
+        with c1:
+            st.subheader("Private Key")
+            st.code(st.session_state['private_pem'].decode(), language='text')
+            st.download_button(
+                label="Download Private Key",
+                data=st.session_state['private_pem'],
+                file_name="private_key.pem",
+                mime="application/x-pem-file"
+            )
+        
+        with c2:
+            st.subheader("Public Key")
+            st.code(st.session_state['public_pem'].decode(), language='text')
+            st.download_button(
+                label="Download Public Key",
+                data=st.session_state['public_pem'],
+                file_name="public_key.pem",
+                mime="application/x-pem-file"
+            )
 
 elif choice == "Sign File":
     st.header("Sign File")
